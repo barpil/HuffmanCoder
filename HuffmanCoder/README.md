@@ -1,9 +1,17 @@
-### Kroki
+## Huffman Coder
+Program for performing Huffman coding and decoding of specified files.
 
-1. Utworzenie własnego priorityQueue.
-2. Zaimportowanie mavenem wlasnej hashmapy w celu zapisania w niej liczby wystapien danych znakow z pliku
-3. Utworzenie drzewa Huffmana
-4. Utworzenie kodowania na podstawie drzewa Huffmana
-5. Zakodowanie odczytanego pliku do Stringa
-6. Zakodowanie odczytanego pliku do pliku binarnego.
-6. Zdekodowanie zapisanego pliku binarnego.
+#### How to use it?
+In order to run the program use prompt command in following format:
+*java -jar \[PATH_TO_HuffmanCoder.jar_FILE] \[PROGRAM_ARGUMENTS]*
+
+**Available program arguments are as follows:**
+
+Use "-i" to specify the entry_file (required)
+Use "-o" to specify the result_file
+
+Use "-e" to encode specified entry_file (required either -e or -d)
+Use "-d" to decode specified entry_file (required either -e or -d)
+
+
+
