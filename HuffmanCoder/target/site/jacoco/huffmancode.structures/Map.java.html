@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Map.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AiSD2024ZEx5</a> &gt; <a href="index.source.html" class="el_package">huffmancode.structures</a> &gt; <span class="el_source">Map.java</span></div><h1>Map.java</h1><pre class="source lang-java linenums">package huffmancode.structures;
+
+import huffmancode.structures.nodes.KVPair;
+
+import java.lang.reflect.Array;
+
+public class Map&lt;K extends Comparable&lt;K&gt;, V&gt; {
+<span class="fc" id="L8">    protected final V nil = null;</span>
+<span class="fc" id="L9">    protected final KVPair&lt;K, V&gt; DELETED= new KVPair&lt;&gt;(null, null);</span>
+
+    protected int size;
+    protected int nElems;
+    protected KVPair&lt;K, V&gt;[] hashElems;
+    private final double correctLoadFactor;
+
+
+    public Map() {
+<span class="fc" id="L18">        this(2039); // initial size as random prime number</span>
+<span class="fc" id="L19">    }</span>
+
+<span class="fc" id="L21">    public Map(int size) {</span>
+<span class="fc" id="L22">        validateMapInitSize(size);</span>
+
+<span class="fc" id="L24">        this.size = size;</span>
+<span class="fc" id="L25">        this.hashElems = createTable(this.size);</span>
+<span class="fc" id="L26">        this.correctLoadFactor = 0.75;</span>
+<span class="fc" id="L27">    }</span>
+
+
+    public void put(K key,V value) {
+<span class="fc" id="L31">        validateInputElem(key);</span>
+<span class="fc" id="L32">        resizeIfNeeded();</span>
+
+<span class="fc" id="L34">        int k = key.hashCode();</span>
+<span class="fc" id="L35">        int i = 0;</span>
+<span class="fc" id="L36">        int hashId = hashFunc(k, i);</span>
+
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">        while (hashElems[hashId] != nil &amp;&amp; hashElems[hashId] != DELETED) {</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            if (i + 1 == size) {</span>
+<span class="nc" id="L40">                doubleResize();</span>
+<span class="nc" id="L41">                i = -1;</span>
+            }
+<span class="fc" id="L43">            i = (i + 1) % size;</span>
+<span class="fc" id="L44">            hashId = hashFunc(k, i);</span>
+        }
+
+<span class="fc" id="L47">        hashElems[hashId] = new KVPair&lt;&gt;(key,value);</span>
+<span class="fc" id="L48">        nElems++;</span>
+<span class="fc" id="L49">    }</span>
+
+
+    public V get(K key) {
+<span class="fc" id="L53">        int i=0;</span>
+        int j;
+<span class="fc" id="L55">        int k=key.hashCode();</span>
+        do{
+<span class="fc" id="L57">            j=hashFunc(k,i);</span>
+<span class="fc bfc" id="L58" title="All 4 branches covered.">            if(hashElems[j]!=null &amp;&amp; hashElems[j].getKey().compareTo(key)==0){</span>
+<span class="fc" id="L59">                return hashElems[j].getValue();</span>
+            }
+<span class="fc" id="L61">            i++;</span>
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">        }while(i&lt;this.size &amp;&amp; hashElems[j]!=null);</span>
+<span class="fc" id="L63">        return null;</span>
+    }
+
+
+    public void remove(K key) {
+<span class="nc" id="L68">        int i=0;</span>
+        int j;
+<span class="nc" id="L70">        int k=key.hashCode();</span>
+        do{
+<span class="nc" id="L72">            j=hashFunc(k,i);</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if(hashElems[j].getKey().compareTo(key)==0){</span>
+<span class="nc" id="L74">                hashElems[j]=DELETED;</span>
+<span class="nc" id="L75">                return;</span>
+            }
+<span class="nc" id="L77">            i++;</span>
+<span class="nc bnc" id="L78" title="All 4 branches missed.">        }while(i&lt;this.size &amp;&amp; hashElems[j]!=null);</span>
+
+<span class="nc" id="L80">    }</span>
+
+    protected void validateMapInitSize(int initialSize) {
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (initialSize &lt; 1) {</span>
+<span class="nc" id="L84">            throw new IllegalArgumentException(&quot;Initial size of map cannot be lower than 1!&quot;);</span>
+        }
+<span class="fc" id="L86">    }</span>
+
+    protected void validateInputElem(K key) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (key == null) {</span>
+<span class="nc" id="L90">            throw new IllegalArgumentException(&quot;Key cannot be null!&quot;);</span>
+        }
+<span class="fc" id="L92">    }</span>
+
+    protected int hashFunc(int key, int i){
+<span class="fc" id="L95">        int m = getSize();</span>
+<span class="fc" id="L96">        key =key &amp; Integer.MAX_VALUE;</span>
+<span class="fc" id="L97">        int h1=key%m;</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if(m==1){</span>
+<span class="nc" id="L99">            return h1;</span>
+        }
+<span class="fc" id="L101">        int h2=1+(key%(m-1));</span>
+<span class="fc" id="L102">        int result = (h1+(h2*i))%m;</span>
+<span class="fc" id="L103">        return (result+m)%m;</span>
+    }
+
+    int getSize() {
+<span class="fc" id="L107">        return size;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private KVPair&lt;K,V&gt;[] createTable(int size) {
+<span class="fc" id="L112">        return (KVPair&lt;K,V&gt;[]) Array.newInstance(KVPair.class, size);</span>
+
+    }
+
+    protected void resizeIfNeeded() {
+<span class="fc" id="L117">        double loadFactor = countLoadFactor();</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (loadFactor &gt;= correctLoadFactor) {</span>
+<span class="fc" id="L119">            doubleResize();</span>
+        }
+<span class="fc" id="L121">    }</span>
+
+    protected double countLoadFactor() {
+<span class="fc" id="L124">        return (double) nElems / size;</span>
+    }
+
+    protected void doubleResize() {
+<span class="fc" id="L128">        this.size *= 2;</span>
+        KVPair&lt;K,V&gt;[] oldElems;
+<span class="fc" id="L130">        oldElems = hashElems;</span>
+<span class="fc" id="L131">        hashElems = createTable(this.size);</span>
+<span class="fc" id="L132">        nElems = 0;</span>
+
+        KVPair&lt;K,V&gt; currentElem;
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        for (int i = 0; i &lt; oldElems.length; i++) {</span>
+<span class="fc" id="L136">            currentElem = oldElems[i];</span>
+
+<span class="pc bpc" id="L138" title="1 of 4 branches missed.">            if (currentElem != nil &amp;&amp; currentElem != DELETED) {</span>
+<span class="fc" id="L139">                put(currentElem.getKey(), currentElem.getValue());</span>
+            }
+        }
+<span class="fc" id="L142">    }</span>
+
+    public int getnElems(){
+<span class="nc" id="L145">        return nElems;</span>
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

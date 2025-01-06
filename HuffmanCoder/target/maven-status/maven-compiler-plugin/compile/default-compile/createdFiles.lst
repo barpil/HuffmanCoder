@@ -1,0 +1,16 @@
+huffmancode\structures\nodes\KVPair.class
+huffmancode\exceptions\ToFewBitsInFileException.class
+huffmancode\structures\CharMap.class
+huffmancode\structures\nodes\CodeNode.class
+huffmancode\structures\NodePriorityQueue.class
+huffmancode\readers\BitReader.class
+huffmancode\writers\BinaryValuesWriter.class
+huffmancode\structures\nodes\CharNode.class
+huffmancode\HuffmanCode.class
+huffmancode\EntryFileMaper.class
+huffmancode\structures\CharacterTree.class
+huffmancode\structures\SimpleStack.class
+Main.class
+huffmancode\structures\RedBlackTree.class
+huffmancode\structures\nodes\LeafCharNode.class
+huffmancode\structures\Map.class

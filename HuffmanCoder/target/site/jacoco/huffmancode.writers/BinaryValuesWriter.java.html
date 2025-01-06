@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BinaryValuesWriter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AiSD2024ZEx5</a> &gt; <a href="index.source.html" class="el_package">huffmancode.writers</a> &gt; <span class="el_source">BinaryValuesWriter.java</span></div><h1>BinaryValuesWriter.java</h1><pre class="source lang-java linenums">package huffmancode.writers;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class BinaryValuesWriter {
+    private StringBuilder byteContent;
+    private FileOutputStream fOS;
+<span class="fc" id="L9">    public BinaryValuesWriter(FileOutputStream fOS){</span>
+<span class="fc" id="L10">        byteContent=new StringBuilder(&quot;&quot;);</span>
+<span class="fc" id="L11">        this.fOS = fOS;</span>
+<span class="fc" id="L12">    }</span>
+    public void writeBinaryToFile(String binaryValue) throws IOException {
+<span class="fc" id="L14">        byteContent.append(binaryValue);</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">        while(byteContent.length()&gt;=8){</span>
+<span class="fc" id="L16">            fOS.write((byte) Integer.parseInt(byteContent.substring(0,8),2));</span>
+<span class="fc" id="L17">            byteContent.delete(0,8);</span>
+        }
+<span class="fc" id="L19">    }</span>
+
+    public void writeBinaryToFile(int intToConvert) throws IOException {
+<span class="nc" id="L22">        writeBinaryToFile(BinaryValuesWriter.convertIntToBinaryString(intToConvert));</span>
+<span class="nc" id="L23">    }</span>
+    public void writeBinaryToFile(int intToConvert, int numOfBitesToWriteOn) throws IOException {
+<span class="fc" id="L25">        writeBinaryToFile(BinaryValuesWriter.convertIntToBinaryString(intToConvert,numOfBitesToWriteOn));</span>
+<span class="fc" id="L26">    }</span>
+
+    public static String convertIntToBinaryString(int intToConvert){
+<span class="fc" id="L29">        StringBuilder sB = new StringBuilder();</span>
+<span class="fc" id="L30">        int n = intToConvert;</span>
+<span class="fc" id="L31">        int powerOf2num =2;</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        while(powerOf2num&lt;=n){</span>
+<span class="fc" id="L33">            powerOf2num*=2;</span>
+        }
+<span class="fc" id="L35">        powerOf2num/=2;</span>
+        //Moze da sie zamienic na bardziej efektywne zamienianie
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        while(powerOf2num&gt;0){</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            if(n/powerOf2num&gt;0){</span>
+<span class="fc" id="L39">                sB.append('1');</span>
+<span class="fc" id="L40">                n-=powerOf2num;</span>
+            }else{
+<span class="fc" id="L42">                sB.append('0');</span>
+            }
+<span class="fc" id="L44">            powerOf2num/=2;</span>
+        }
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if(sB.isEmpty()){</span>
+<span class="nc" id="L47">            sB.append('0');</span>
+        }
+
+<span class="fc" id="L50">        return sB.toString();</span>
+    }
+
+    public static String convertIntToBinaryString(int intToConvert, int numOfBitesToWriteOn){
+<span class="fc" id="L54">        String s=BinaryValuesWriter.convertIntToBinaryString(intToConvert);</span>
+
+<span class="fc" id="L56">        StringBuilder result  = new StringBuilder();</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if(s.length()&gt;numOfBitesToWriteOn){</span>
+<span class="nc" id="L58">            System.err.println(&quot;\033[31mAn error occured while decoding file!\nBinaryValuesWriter error:\nCannot write &quot;+intToConvert+&quot; on &quot;+ numOfBitesToWriteOn+&quot; bits\033[0m&quot;);</span>
+<span class="nc" id="L59">            throw new RuntimeException();</span>
+        }
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for(int i=0;i&lt;numOfBitesToWriteOn-s.length();i++){</span>
+<span class="fc" id="L62">            result.append('0');</span>
+        }
+
+<span class="fc" id="L65">        return result.append(s).toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
